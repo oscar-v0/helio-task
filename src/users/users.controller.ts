@@ -16,24 +16,19 @@ export class UsersController {
 
   @Get('/:id')
   async getOne(@Param() params: CommonDto.IdParams) {
-    await Validation.validate(CommonDto.IdParams, params);
-    return this.usersService.getOne({ id: params.id }).then(ApplicationError.notFoundIfNull);
+    return this.usersService.getOne(await Validation.validate(CommonDto.IdParams, params)).then(ApplicationError.notFoundIfNull);
   }
 
   @Post('/create')
   async create(@Body() user: UserDto.CreateParams) {
-    await Validation.validate(UserDto.CreateParams, user);
-    return this.usersService.create({ data: user });
+    return this.usersService.create({ data: await Validation.validate(UserDto.CreateParams, user) });
   }
 
   @Patch('/update/:id')
   async update(@Param() params: CommonDto.IdParams, @Body() user: UserDto.UpdateParams) {
-    await Validation.validate(CommonDto.IdParams, params);
-    await Validation.validate(UserDto.UpdateParams, user);
-
     return this.usersService.update({
-      where: { id: params.id },
-      data: user,
+      where: await Validation.validate(CommonDto.IdParams, params),
+      data: await Validation.validate(UserDto.UpdateParams, user),
     });
   }
 

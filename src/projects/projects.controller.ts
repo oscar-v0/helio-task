@@ -20,22 +20,17 @@ export class ProjectsController {
 
   @Get('/:id')
   async getOne(@Param() params: CommonDto.IdParams) {
-    await Validation.validate(CommonDto.IdParams, params);
-    return this.projectService.getOne({ id: params.id, userId: this.userPrincipal.id }).then(ApplicationError.notFoundIfNull);
+    const { id } = await Validation.validate(CommonDto.IdParams, params);
+    return this.projectService.getOne({ id, userId: this.userPrincipal.id }).then(ApplicationError.notFoundIfNull);
   }
 
   @Post('/create')
   async create(@Body() project: ProjectDto.CreateParams) {
-    await Validation.validate(ProjectDto.CreateParams, project);
-
     return this.projectService.createWithResourcePermission({
       userId: this.userPrincipal.id,
       permission: ['Admin'],
       data: {
-        name: project.name,
-        description: project.description,
-        priority: project.priority,
-        tags: project.tags,
+        ...(await Validation.validate(ProjectDto.CreateParams, project)),
         status: 'Active',
         Company: { connect: { id: this.userPrincipal.companyId } },
       },
@@ -44,29 +39,19 @@ export class ProjectsController {
 
   @Patch('/update/:id')
   async update(@Param() params: CommonDto.IdParams, @Body() project: ProjectDto.CreateParams) {
-    await Validation.validate(CommonDto.IdParams, params);
-    await Validation.validate(ProjectDto.CreateParams, project);
+    const { id } = await Validation.validate(CommonDto.IdParams, params);
 
     return this.projectService.update({
-      id: params.id,
+      id,
       userId: this.userPrincipal.id,
-      data: {
-        name: project.name,
-        description: project.description,
-        priority: project.priority,
-        tags: project.tags,
-      },
+      data: await Validation.validate(ProjectDto.CreateParams, project),
     });
   }
 
   @HttpCode(204)
   @Delete('/delete/:id')
   async delete(@Param() params: CommonDto.IdParams) {
-    await Validation.validate(CommonDto.IdParams, params);
-
-    await this.projectService.delete({
-      id: params.id,
-      userId: this.userPrincipal.id,
-    });
+    const { id } = await Validation.validate(CommonDto.IdParams, params);
+    await this.projectService.delete({ id, userId: this.userPrincipal.id });
   }
 }
