@@ -116,7 +116,7 @@ export class ResourceService {
     });
   }
 
-  async deleteOne<K extends ResourceService.ResourceType>(params: ResourceService.UpdateOneParams<K>) {
+  async deleteOne<K extends ResourceService.ResourceType>(params: ResourceService.DeleteOneParams<K>) {
     await this.requirePermission(params, 'Delete');
 
     return await (prisma[params.resourceType] as any).delete({
@@ -139,7 +139,10 @@ export class ResourceService {
     });
 
     if (!permission || (!permission.type.includes('Admin') && !permission.type.includes(type))) {
-      throw new ApplicationError({ code: 'resource.forbidden' });
+      throw new ApplicationError({
+        code: 'resource.forbidden',
+        message: `Required permission: ${type}, granted: ${permission.type.join(',')}`,
+      });
     }
   }
 }

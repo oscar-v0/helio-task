@@ -3,15 +3,13 @@ import { Prisma, ResourcePermissionType } from '@prisma/client';
 import prisma from 'src/prisma';
 import { ResourceService } from 'src/resource/resource.service';
 
-export namespace ProjectsServiceDto {
-  export class CreateWithPermissionParams {
-    userId: string;
-    project: Prisma.ProjectCreateInput;
-    permission: ResourcePermissionType[];
-  }
-}
 export namespace ProjectsService {
   export type GetOneParams = {
+    id: string;
+    userId: string;
+  };
+
+  export type DeleteOneParams = {
     id: string;
     userId: string;
   };
@@ -22,6 +20,18 @@ export namespace ProjectsService {
 
   export type CreateParams = {
     name: string;
+  };
+
+  export type CreateWithPermissionParams = {
+    userId: string;
+    permission: ResourcePermissionType[];
+    data: Prisma.ProjectCreateInput;
+  };
+
+  export type UpdateParams = {
+    id: string;
+    userId: string;
+    data: Prisma.ProjectUpdateInput;
   };
 }
 
@@ -44,8 +54,8 @@ export class ProjectsService {
     });
   }
 
-  async createAndGrantAccess(params: ProjectsServiceDto.CreateWithPermissionParams) {
-    const project = await prisma.project.create({ data: params.project });
+  async createWithResourcePermission(params: ProjectsService.CreateWithPermissionParams) {
+    const project = await prisma.project.create({ data: params.data });
 
     await this.resourceService.createOrUpdatePermission({
       type: params.permission,
@@ -55,5 +65,22 @@ export class ProjectsService {
     });
 
     return project;
+  }
+
+  async update(params: ProjectsService.UpdateParams) {
+    return await this.resourceService.updateOne({
+      data: params.data,
+      userId: params.userId,
+      resourceType: 'project',
+      resourceId: params.id,
+    });
+  }
+
+  async delete(params: ProjectsService.GetOneParams) {
+    return await this.resourceService.deleteOne({
+      userId: params.userId,
+      resourceId: params.id,
+      resourceType: 'project',
+    });
   }
 }
