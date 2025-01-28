@@ -8,5 +8,57 @@ generator client {
 }
 
 model User {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  email String
+
+  accesses  ResourcePermission[]
+  Company   Company              @relation(fields: [companyId], references: [id])
+  companyId String               @db.ObjectId
+}
+
+model Company {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  industry String?
+
+  projects Project[]
+  User     User[]
+}
+
+enum ProjectStatus {
+  Active
+  Archived
+}
+
+model Project {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  status      ProjectStatus @default(Active)
+  priority    Int?
+  tags        String[]      @default([])
+
+  Company   Company @relation(fields: [companyId], references: [id])
+  companyId String  @db.ObjectId
+}
+
+enum ResourcePermissionType {
+  Read
+  Write
+  Delete
+  Admin
+}
+
+model ResourcePermission {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  type         ResourcePermissionType[]
+  resourceId   String
+  resourceType String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+
+  @@unique([resourceId, resourceType, userId])
 }
