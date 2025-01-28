@@ -6,6 +6,12 @@ export namespace CompanyDto {
     @MinLength(1)
     @IsString()
     name: string;
+
+    @MaxLength(30)
+    @MinLength(1)
+    @IsString()
+    @IsOptional()
+    industry: string;
   }
 
   export class UpdateParams {
@@ -14,5 +20,11 @@ export namespace CompanyDto {
     @IsString()
     @IsOptional()
     name?: string;
+
+    @MaxLength(30)
+    @MinLength(1)
+    @IsString()
+    @IsOptional()
+    industry?: string;
   }
 }

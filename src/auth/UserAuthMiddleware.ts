@@ -2,11 +2,10 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import prisma from 'src/prisma';
 import { ApplicationError } from 'src/utils/ApplicationError';
-import { UserPrincipal } from './UserPrincipal';
 
 @Injectable()
 export class UserAuthMiddleware implements NestMiddleware {
-  constructor(private readonly userPrincipal: UserPrincipal) {}
+  constructor() {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const authorization = req.header('authorization');
@@ -23,7 +22,7 @@ export class UserAuthMiddleware implements NestMiddleware {
         });
 
         if (user) {
-          (req as any).auth = { user };
+          req.auth = { user };
           next();
           return;
         }
