@@ -1,54 +1,10 @@
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsMongoId,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-} from '@nestjs/class-validator';
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
 import { UserPrincipal } from 'src/auth/UserPrincipal';
+import { CommonDto } from 'src/dto/CommonDto';
+import { ProjectDto } from 'src/dto/ProjectDto';
 import { ApplicationError } from 'src/utils/ApplicationError';
 import { Validation } from 'src/utils/Validation';
 import { ProjectsService } from './projects.service';
-
-export namespace Dto {
-  export class IdParams {
-    @IsMongoId()
-    id: string;
-  }
-  export class CreateParams {
-    @MinLength(1)
-    @MaxLength(30)
-    @IsNotEmpty()
-    @IsString()
-    name: string;
-
-    @MinLength(0)
-    @MaxLength(200)
-    @IsOptional()
-    @IsString()
-    description?: string;
-
-    @Min(1)
-    @Max(3)
-    @IsOptional()
-    @IsNumber()
-    priority?: number;
-
-    @ArrayMinSize(0)
-    @ArrayMaxSize(10)
-    @IsArray()
-    @IsOptional()
-    tags?: string[];
-  }
-}
 
 @Controller('projects')
 export class ProjectsController {
@@ -63,14 +19,14 @@ export class ProjectsController {
   }
 
   @Get('/:id')
-  async getOne(@Param() params: Dto.IdParams) {
-    await Validation.validate(Dto.IdParams, params);
+  async getOne(@Param() params: CommonDto.IdParams) {
+    await Validation.validate(CommonDto.IdParams, params);
     return this.projectService.getOne({ id: params.id, userId: this.userPrincipal.id }).then(ApplicationError.notFoundIfNull);
   }
 
   @Post('/create')
-  async create(@Body() project: Dto.CreateParams) {
-    await Validation.validate(Dto.CreateParams, project);
+  async create(@Body() project: ProjectDto.CreateParams) {
+    await Validation.validate(ProjectDto.CreateParams, project);
 
     return this.projectService.createWithResourcePermission({
       userId: this.userPrincipal.id,
@@ -87,9 +43,9 @@ export class ProjectsController {
   }
 
   @Patch('/update/:id')
-  async update(@Param() params: Dto.IdParams, @Body() project: Dto.CreateParams) {
-    await Validation.validate(Dto.IdParams, params);
-    await Validation.validate(Dto.CreateParams, project);
+  async update(@Param() params: CommonDto.IdParams, @Body() project: ProjectDto.CreateParams) {
+    await Validation.validate(CommonDto.IdParams, params);
+    await Validation.validate(ProjectDto.CreateParams, project);
 
     return this.projectService.update({
       id: params.id,
@@ -105,8 +61,8 @@ export class ProjectsController {
 
   @HttpCode(204)
   @Delete('/delete/:id')
-  async delete(@Param() params: Dto.IdParams) {
-    await Validation.validate(Dto.IdParams, params);
+  async delete(@Param() params: CommonDto.IdParams) {
+    await Validation.validate(CommonDto.IdParams, params);
 
     await this.projectService.delete({
       id: params.id,

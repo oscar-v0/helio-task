@@ -141,7 +141,7 @@ export class ResourceService {
     if (!permission || (!permission.type.includes('Admin') && !permission.type.includes(type))) {
       throw new ApplicationError({
         code: 'resource.forbidden',
-        message: `Required permission: ${type}, granted: ${permission.type.join(',')}`,
+        message: `Required permission: ${type}, granted: ${permission?.type.join(',') || 'None'}`,
       });
     }
   }
