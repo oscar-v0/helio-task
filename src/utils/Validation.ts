@@ -1,13 +1,16 @@
 import { validate } from '@nestjs/class-validator';
-import { plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { ApplicationError } from './ApplicationError';
 
 export class Validation {
-  static async validate(cls, value) {
-    const e = await validate(plainToInstance(cls, value));
+  static async validate<T>(cls: ClassConstructor<T>, value: any) {
+    const instance = plainToInstance(cls, value);
+    const errors = await validate(instance as any, { whitelist: true });
 
-    if (e.length > 0) {
-      throw new ApplicationError({ code: 'error.badRequest', message: Object.entries(e[0].constraints)[0].join(': ') });
+    if (errors.length > 0) {
+      throw new ApplicationError({ code: 'error.badRequest', message: Object.entries(errors[0].constraints)[0].join(': ') });
     }
+
+    return instance;
   }
 }

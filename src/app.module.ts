@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserAuthMiddleware } from './auth/UserAuthMiddleware';
 import { UserPrincipal } from './auth/UserPrincipal';
+import { CompaniesController } from './companies/companies.controller';
+import { CompaniesService } from './companies/companies.service';
 import { ProjectsController } from './projects/projects.controller';
 import { ProjectsService } from './projects/projects.service';
 import { ResourceService } from './resource/resource.service';
@@ -12,8 +14,8 @@ import { UsersService } from './users/users.service';
 
 @Module({
   imports: [ConfigModule.forRoot({})],
-  controllers: [AppController, ProjectsController, UsersController],
-  providers: [AppService, ProjectsService, ResourceService, UserPrincipal, UsersService],
+  controllers: [AppController, CompaniesController, ProjectsController, UsersController],
+  providers: [AppService, CompaniesService, ProjectsService, ResourceService, UserPrincipal, UsersService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

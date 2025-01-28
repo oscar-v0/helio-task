@@ -20,7 +20,10 @@ export class UsersService {
   }
 
   async update(params: Parameters<typeof prisma.user.update>[0]) {
-    return await prisma.user.update(params);
+    return await prisma.user.update(params).catch((e) => {
+      if (e.code === 'P2025') throw new ApplicationError({ code: 'error.notFound' });
+      throw e;
+    });
   }
 
   async delete(params: { id: string }) {
