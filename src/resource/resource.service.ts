@@ -7,11 +7,15 @@ import { firstCharUpperCase } from 'src/utils/string';
 export namespace ResourceService {
   export type ResourceType = 'project';
 
+  export type GetManyParams<K extends ResourceType> = {
+    userId: string;
+    resourceType: K;
+  };
+
   export type GetOneParams<K extends ResourceType> = {
     userId: string;
     resourceId: string;
     resourceType: K;
-    where?: Omit<Parameters<(typeof prisma)[K]['findUnique']>[0]['where'], 'id'>;
   };
 
   export type UpdateOneParams<K extends ResourceType> = GetOneParams<K> & {
@@ -24,12 +28,14 @@ export namespace ResourceService {
 // @todo get rid of "as any"
 @Injectable()
 export class ResourceService {
-  async getMany<K extends ResourceService.ResourceType>(params: { resourceType: K }) {
+  async getMany<K extends ResourceService.ResourceType>(params: ResourceService.GetManyParams<K>) {
     return (await prisma.resourcePermission.aggregateRaw({
       pipeline: [
         {
           $match: {
             type: { $in: ['Read', 'Admin'] },
+            userId: { $oid: params.userId },
+            resourceType: params.resourceType,
           },
         },
         {
@@ -57,10 +63,11 @@ export class ResourceService {
         {
           $project: {
             _id: 0,
+            // @todo not very elegant, nested objectId wouldn't be stringified correctly e.g. company: {_id: ...}
             ...Object.fromEntries(
               Object.entries(prisma[params.resourceType].fields).map(([name, field]) => [
                 name,
-                field.typeName === 'String' ? { $toString: '$_id' } : 1,
+                field.typeName === 'String' && !field.isList ? { $toString: `$${name === 'id' ? '_id' : name}` } : 1,
               ]),
             ),
           },
@@ -73,10 +80,7 @@ export class ResourceService {
     await this.requirePermission(params, 'Read');
 
     return await (prisma[params.resourceType] as any).findUnique({
-      where: {
-        id: params.resourceId,
-        ...params.where,
-      },
+      where: { id: params.resourceId },
     });
   }
 
@@ -84,10 +88,7 @@ export class ResourceService {
     await this.requirePermission(params, 'Write');
 
     return await (prisma[params.resourceType] as any).update({
-      where: {
-        ...params.where,
-        id: params.resourceId,
-      },
+      where: { id: params.resourceId },
       data: params.data,
     });
   }
@@ -96,10 +97,7 @@ export class ResourceService {
     await this.requirePermission(params, 'Delete');
 
     return await (prisma[params.resourceType] as any).delete({
-      where: {
-        id: params.resourceId,
-        ...params.where,
-      },
+      where: { id: params.resourceId },
     });
   }
 

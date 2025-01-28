@@ -6,14 +6,19 @@ export namespace ProjectsService {
     id: string;
     userId: string;
   };
+
+  export type GetManyParams = {
+    userId: string;
+  };
 }
 
 @Injectable()
 export class ProjectsService {
   constructor(private readonly resourceService: ResourceService) {}
 
-  async getMany() {
+  async getMany({ userId }: ProjectsService.GetManyParams) {
     return this.resourceService.getMany({
+      userId,
       resourceType: 'project',
     });
   }
