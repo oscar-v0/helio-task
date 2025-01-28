@@ -7,11 +7,12 @@ import { UserPrincipal } from './auth/UserPrincipal';
 import { ProjectsController } from './projects/projects.controller';
 import { ProjectsService } from './projects/projects.service';
 import { ResourceService } from './resource/resource.service';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [ConfigModule.forRoot({})],
   controllers: [AppController, ProjectsController],
-  providers: [AppService, ProjectsService, ResourceService, UserPrincipal],
+  providers: [AppService, ProjectsService, ResourceService, UserPrincipal, UsersService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

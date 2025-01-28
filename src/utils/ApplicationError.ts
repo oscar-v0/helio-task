@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 const errors = {
+  'error.badRequest': HttpStatus.BAD_REQUEST,
   'auth.unauthorized': HttpStatus.UNAUTHORIZED,
   'resource.forbidden': HttpStatus.FORBIDDEN,
 };

@@ -1,18 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { ApplicationError } from 'src/utils/ApplicationError';
 
 @Injectable()
 export class UserPrincipal {
   constructor(@Inject('REQUEST') private readonly req: Request) {}
 
-  get id() {
+  private _get(): User {
     // @todo fix as any
-    const id = (this.req as any).auth?.userId;
+    const user = (this.req as any).auth?.user;
+    if (!user) throw new ApplicationError({ code: 'auth.unauthorized' });
+    return user;
+  }
 
-    if (!id) {
-      throw new ApplicationError({ code: 'auth.unauthorized' });
-    }
+  get id() {
+    return this._get().id;
+  }
 
-    return id;
+  get companyId() {
+    return this._get().companyId;
   }
 }

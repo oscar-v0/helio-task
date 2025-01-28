@@ -4,8 +4,17 @@ import prisma from 'src/prisma';
 import { ApplicationError } from 'src/utils/ApplicationError';
 import { firstCharUpperCase } from 'src/utils/string';
 
+export namespace ResourceServiceDto {}
+
 export namespace ResourceService {
   export type ResourceType = 'project';
+
+  export type CreateOrUpdatePermission = {
+    type: ResourcePermissionType[];
+    userId: string;
+    resourceId: string;
+    resourceType: ResourceType;
+  };
 
   export type GetManyParams<K extends ResourceType> = {
     userId: string;
@@ -28,6 +37,20 @@ export namespace ResourceService {
 // @todo get rid of "as any"
 @Injectable()
 export class ResourceService {
+  async createOrUpdatePermission(params: ResourceService.CreateOrUpdatePermission) {
+    await prisma.resourcePermission.upsert({
+      create: params,
+      update: params,
+      where: {
+        resourceId_resourceType_userId: {
+          userId: params.userId,
+          resourceId: params.resourceId,
+          resourceType: params.resourceType,
+        },
+      },
+    });
+  }
+
   async getMany<K extends ResourceService.ResourceType>(params: ResourceService.GetManyParams<K>) {
     return (await prisma.resourcePermission.aggregateRaw({
       pipeline: [
@@ -115,7 +138,7 @@ export class ResourceService {
       },
     });
 
-    if (!permission || !permission.type.includes('Admin') || !permission.type.includes(type)) {
+    if (!permission || (!permission.type.includes('Admin') && !permission.type.includes(type))) {
       throw new ApplicationError({ code: 'resource.forbidden' });
     }
   }
