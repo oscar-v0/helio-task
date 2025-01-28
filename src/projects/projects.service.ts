@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, ResourcePermissionType } from '@prisma/client';
-import prisma from 'src/prisma';
-import { ResourceService } from 'src/resource/resource.service';
+import prisma from '../prisma';
+import { ResourceService } from '../resource/resource.service';
 
 export namespace ProjectsService {
   export type GetOneParams = {

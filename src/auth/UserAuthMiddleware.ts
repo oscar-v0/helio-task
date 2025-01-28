@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import prisma from 'src/prisma';
-import { ApplicationError } from 'src/utils/ApplicationError';
+import prisma from '../prisma';
+import { ApplicationError } from '../utils/ApplicationError';
 
 @Injectable()
 export class UserAuthMiddleware implements NestMiddleware {

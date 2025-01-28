@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ResourcePermissionType } from '@prisma/client';
-import prisma from 'src/prisma';
-import { ApplicationError } from 'src/utils/ApplicationError';
-import { firstCharUpperCase } from 'src/utils/string';
-
-export namespace ResourceServiceDto {}
+import prisma from '../prisma';
+import { ApplicationError } from '../utils/ApplicationError';
+import { firstCharUpperCase } from '../utils/string';
 
 export namespace ResourceService {
   export type ResourceType = 'project';

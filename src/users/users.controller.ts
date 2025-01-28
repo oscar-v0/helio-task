@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
-import { CommonDto } from 'src/dto/CommonDto';
-import { UserDto } from 'src/dto/UserDto';
-import { ApplicationError } from 'src/utils/ApplicationError';
-import { Validation } from 'src/utils/Validation';
+import { CommonDto } from '../dto/CommonDto';
+import { UserDto } from '../dto/UserDto';
+import { ApplicationError } from '../utils/ApplicationError';
+import { Validation } from '../utils/Validation';
 import { UsersService } from './users.service';
 
 @Controller('users')

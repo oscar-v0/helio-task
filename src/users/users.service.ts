@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import prisma from 'src/prisma';
-import { ApplicationError } from 'src/utils/ApplicationError';
+import prisma from '../prisma';
+import { ApplicationError } from '../utils/ApplicationError';
 
 @Injectable()
 export class UsersService {

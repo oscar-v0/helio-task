@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
-import { UserPrincipal } from 'src/auth/UserPrincipal';
-import { CommonDto } from 'src/dto/CommonDto';
-import { ProjectDto } from 'src/dto/ProjectDto';
-import { ApplicationError } from 'src/utils/ApplicationError';
-import { Validation } from 'src/utils/Validation';
+import { UserPrincipal } from '../auth/UserPrincipal';
+import { CommonDto } from '../dto/CommonDto';
+import { ProjectDto } from '../dto/ProjectDto';
+import { ApplicationError } from '../utils/ApplicationError';
+import { Validation } from '../utils/Validation';
 import { ProjectsService } from './projects.service';
 
 @Controller('projects')
