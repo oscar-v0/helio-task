@@ -12,7 +12,13 @@ export namespace ProjectsService {
 export class ProjectsService {
   constructor(private readonly resourceService: ResourceService) {}
 
-  async getOneProject(params: ProjectsService.GetOneParams) {
+  async getMany() {
+    return this.resourceService.getMany({
+      resourceType: 'project',
+    });
+  }
+
+  async getOne(params: ProjectsService.GetOneParams) {
     return await this.resourceService.getOne({
       userId: params.userId,
       resourceId: params.id,

@@ -54,7 +54,7 @@ model ResourcePermission {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   type         ResourcePermissionType[]
-  resourceId   String
+  resourceId   String                   @db.ObjectId
   resourceType String
 
   user   User   @relation(fields: [userId], references: [id])

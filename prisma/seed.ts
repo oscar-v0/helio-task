@@ -45,7 +45,7 @@ const main = async () => {
         await prisma.resourcePermission.create({
           data: {
             id: `6798ef6a2b7b801acc439f2${i}`,
-            type: i === 0 ? ['Admin'] : i === 1 ? ['Read', 'Write'] : ['Read'],
+            type: i === 1 ? ['Admin'] : i === 2 ? ['Read', 'Write'] : ['Read'],
             userId: user.id,
             resourceId: project.id,
             resourceType: 'project',
