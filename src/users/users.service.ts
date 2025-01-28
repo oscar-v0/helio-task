@@ -27,8 +27,6 @@ export class UsersService {
   }
 
   async delete(params: { id: string }) {
-    // @todo resourcePermission deletion should be handled by ResourceService
-    await prisma.resourcePermission.deleteMany({ where: { userId: params.id } });
     return await prisma.user.delete({ where: { id: params.id } }).catch((e) => {
       if (e.code === 'P2025') throw new ApplicationError({ code: 'error.notFound' });
       throw e;

@@ -20,7 +20,6 @@ export class CompaniesService {
   }
 
   async update(params: Parameters<typeof prisma.company.update>[0]) {
-    console.log(params);
     return await prisma.company.update(params).catch((e) => {
       if (e.code === 'P2025') throw new ApplicationError({ code: 'error.notFound' });
       throw e;

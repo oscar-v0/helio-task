@@ -13,7 +13,7 @@ model User {
   email String
 
   accesses  ResourcePermission[]
-  Company   Company              @relation(fields: [companyId], references: [id])
+  Company   Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String               @db.ObjectId
 }
 
@@ -39,7 +39,7 @@ model Project {
   priority    Int?
   tags        String[]      @default([])
 
-  Company   Company @relation(fields: [companyId], references: [id])
+  Company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String  @db.ObjectId
 }
 
@@ -57,7 +57,7 @@ model ResourcePermission {
   resourceId   String                   @db.ObjectId
   resourceType String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @db.ObjectId
 
   @@unique([resourceId, resourceType, userId])
