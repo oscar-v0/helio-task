@@ -1,4 +1,16 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength } from '@nestjs/class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+} from '@nestjs/class-validator';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UserPrincipal } from 'src/auth/UserPrincipal';
 import { Validation } from 'src/utils/Validation';
@@ -23,6 +35,11 @@ export namespace Dto {
     @IsOptional()
     @IsNumber()
     priority?: number;
+
+    @ArrayMinSize(0)
+    @ArrayMaxSize(10)
+    @IsArray()
+    tags?: string[];
   }
 }
 
@@ -54,6 +71,7 @@ export class ProjectsController {
         name: project.name,
         description: project.description,
         priority: project.priority,
+        tags: project.tags,
         status: 'Active',
         Company: { connect: { id: this.userPrincipal.companyId } },
       },
